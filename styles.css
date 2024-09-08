@@ -1,0 +1,71 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Header Styles */
+header {
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+  text-align: center;
+}
+
+header h1 {
+  margin-bottom: 10px;
+}
+
+#locationSearch {
+  padding: 5px;
+  font-size: 16px;
+  width: 200px;
+  margin-right: 10px;
+}
+
+#searchButton {
+  padding: 6px 10px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+#searchButton:hover {
+  background-color: #0056b3;
+}
+
+/* Map Container Styles */
+#map {
+  flex-grow: 1;
+  height: 100%;
+}
+
+/* Footer and Button Styles */
+footer {
+  padding: 10px;
+  background-color: #f8f9fa;
+  text-align: center;
+}
+
+button {
+  padding: 10px;
+  margin: 5px;
+  font-size: 16px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #218838;
+}
