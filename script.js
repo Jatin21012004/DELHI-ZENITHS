@@ -1,42 +1,40 @@
 window.onload = function() {
-  // Initialize the map and set its view to a specific location (India's center) with zoom level
-  var map = L.map('map').setView([20.5937, 78.9629], 5);
+  // Initialize the map
+  var map = L.map('map').setView([28.6139, 77.209], 12); // Set initial view to Delhi (for example)
 
   // Add OpenStreetMap tiles
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: 'Map data © OpenStreetMap contributors'
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 19
   }).addTo(map);
 
-  // Define a default icon for "Chai Tapri" (Leaflet default icon)
+  // Define a default icon for "Chai Tapri"
   var chaiTapriIcon = L.icon({
-    iconUrl: 'https://unpkg.com/leaflet/dist/images/marker-icon.png', // Default marker icon
-    iconSize: [25, 41], // Default size
-    iconAnchor: [12, 41], // Icon anchor
-    popupAnchor: [1, -34] // Popup anchor
+    iconUrl: 'https://unpkg.com/leaflet/dist/images/marker-icon.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34]
   });
-
-  // Hardcoded "Chai Tapri" locations in India
-  var chaiTapris = [
-    { name: "Kadak Chai - Delhi", lat: 28.6139, lon: 77.2090 },
-    { name: "Tapri Chai - Jaipur", lat: 26.9124, lon: 75.7873 },
-    { name: "Mumbai Street Chai", lat: 19.0760, lon: 72.8777 },
-    { name: "Kolkatta Famous Chai", lat: 22.5726, lon: 88.3639 },
-    { name: "Chennai Masala Chai", lat: 13.0827, lon: 80.2707 }
-  ];
 
   // Create a marker cluster group
   var markers = L.markerClusterGroup();
 
-  // Add "Chai Tapri" markers to the marker cluster group
-  chaiTapris.forEach(function(spot) {
-    var marker = L.marker([spot.lat, spot.lon], { icon: chaiTapriIcon })
-      .bindPopup(`<b>${spot.name}</b><br>Famous Chai Tapri`);
+  // Function to add a marker to the map
+  function addMarker(location) {
+    var marker = L.marker([location.lat, location.lon], { icon: chaiTapriIcon })
+      .bindPopup(`<b>${location.name}</b><br>Famous Chai Tapri<br><a href="https://www.google.com/maps/search/?api=1&query=${location.lat},${location.lon}" target="_blank">View on Google Maps</a>`);
     markers.addLayer(marker);
-  });
+  }
 
-  // Add the marker cluster group to the map
-  map.addLayer(markers);
+  // Fetch and display predefined locations
+  fetch('/locations')
+    .then(response => response.json())
+    .then(data => {
+      data.forEach(location => addMarker(location));
+      map.addLayer(markers);
+    })
+    .catch(error => console.error('Error fetching locations:', error));
 
   // Add zoom controls
   document.getElementById('zoomIn').addEventListener('click', function() {
@@ -50,12 +48,25 @@ window.onload = function() {
   // Geolocation: Locate user on the map
   document.getElementById('locateMe').addEventListener('click', function() {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function(position) {
-        var lat = position.coords.latitude;
-        var lon = position.coords.longitude;
-        map.setView([lat, lon], 13);
-        L.marker([lat, lon], { icon: chaiTapriIcon }).addTo(map).bindPopup("You are here! Enjoy Chai nearby!").openPopup();
-      });
+      navigator.geolocation.getCurrentPosition(
+        function(position) {
+          var lat = position.coords.latitude;
+          var lon = position.coords.longitude;
+          map.setView([lat, lon], 13);
+          L.marker([lat, lon], { icon: chaiTapriIcon }).addTo(map)
+            .bindPopup("You are here! Enjoy Chai nearby!")
+            .openPopup();
+        },
+        function(error) {
+          console.error('Error occurred while fetching location:', error);
+          alert('Error occurred while fetching location.');
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0
+        }
+      );
     } else {
       alert("Geolocation is not supported by this browser.");
     }
@@ -73,7 +84,9 @@ window.onload = function() {
             var lat = data[0].lat;
             var lon = data[0].lon;
             map.setView([lat, lon], 13);
-            L.marker([lat, lon], { icon: chaiTapriIcon }).addTo(map).bindPopup(`Location: ${query}`).openPopup();
+            L.marker([lat, lon], { icon: chaiTapriIcon }).addTo(map)
+              .bindPopup(`Location: ${query}`)
+              .openPopup();
           } else {
             alert("Location not found.");
           }

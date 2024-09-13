@@ -6,7 +6,7 @@
 }
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -16,56 +16,40 @@ body {
 header {
   background-color: #333;
   color: #fff;
-  padding: 10px;
-  text-align: center;
+  padding: 15px 0;
 }
 
 header h1 {
   margin-bottom: 10px;
 }
 
-#locationSearch {
-  padding: 5px;
-  font-size: 16px;
-  width: 200px;
-  margin-right: 10px;
-}
-
-#searchButton {
-  padding: 6px 10px;
-  background-color: #007BFF;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-#searchButton:hover {
-  background-color: #0056b3;
-}
-
 /* Map Container Styles */
 #map {
-  flex-grow: 1;
-  height: 100%;
+  height: 80vh; /* Adjust the height as needed */
 }
 
-/* Footer and Button Styles */
+/* Footer Styles */
 footer {
-  padding: 10px;
   background-color: #f8f9fa;
-  text-align: center;
+  padding: 15px 0;
 }
 
-button {
-  padding: 10px;
-  margin: 5px;
-  font-size: 16px;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  cursor: pointer;
+/* Loading Indicator */
+#loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
 }
 
-button:hover {
-  background-color: #218838;
+/* Responsive Styles */
+@media (max-width: 768px) {
+  #map {
+    height: 60vh;
+  }
+
+  .d-flex {
+    flex-direction: column;
+  }
 }
