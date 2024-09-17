@@ -1,6 +1,19 @@
+// Define the locationMarker icon globally
+var locationMarker = L.icon({
+  iconUrl: 'locationMarker.png', // Replace with the path to your custom icon image
+  iconSize: [32, 32], // Adjust size as needed
+  iconAnchor: [16, 32], // Anchor point for the icon (half of width, full height)
+  popupAnchor: [0, -32] // Popup anchor relative to the icon
+});
+
 window.onload = function() {
+  // Check if the map is already initialized
+  if (window.map) {
+    return;
+  }
+
   // Initialize the map
-  var map = L.map('map').setView([28.6139, 77.209], 12); // Set initial view to Delhi (for example)
+  window.map = L.map('map').setView([28.6139, 77.209], 12); // Set initial view to Delhi
 
   // Add OpenStreetMap tiles
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -9,20 +22,12 @@ window.onload = function() {
     maxZoom: 19
   }).addTo(map);
 
-  // Define a default icon for "Chai Tapri"
-  var chaiTapriIcon = L.icon({
-    iconUrl: 'https://unpkg.com/leaflet/dist/images/marker-icon.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34]
-  });
-
   // Create a marker cluster group
   var markers = L.markerClusterGroup();
 
   // Function to add a marker to the map
   function addMarker(location) {
-    var marker = L.marker([location.lat, location.lon], { icon: chaiTapriIcon })
+    var marker = L.marker([location.lat, location.lon], { icon: locationMarker })
       .bindPopup(`<b>${location.name}</b><br>Famous Chai Tapri<br><a href="https://www.google.com/maps/search/?api=1&query=${location.lat},${location.lon}" target="_blank">View on Google Maps</a>`);
     markers.addLayer(marker);
   }
@@ -53,8 +58,8 @@ window.onload = function() {
           var lat = position.coords.latitude;
           var lon = position.coords.longitude;
           map.setView([lat, lon], 13);
-          L.marker([lat, lon], { icon: chaiTapriIcon }).addTo(map)
-            .bindPopup("You are here! Enjoy Chai nearby!")
+          L.marker([lat, lon], { icon: locationMarker }).addTo(map)
+            .bindPopup("You've arrived at this spot, ready to uncover its hidden gems!")
             .openPopup();
         },
         function(error) {
@@ -84,7 +89,7 @@ window.onload = function() {
             var lat = data[0].lat;
             var lon = data[0].lon;
             map.setView([lat, lon], 13);
-            L.marker([lat, lon], { icon: chaiTapriIcon }).addTo(map)
+            L.marker([lat, lon], { icon: locationMarker }).addTo(map)
               .bindPopup(`Location: ${query}`)
               .openPopup();
           } else {
@@ -94,6 +99,49 @@ window.onload = function() {
         .catch(error => alert("Error fetching location data."));
     } else {
       alert("Please enter a location.");
+    }
+  });
+
+  // Handle form submission
+  document.getElementById('suggestLocationForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var nameElement = document.getElementById('name');
+    var latitudeElement = document.getElementById('latitude');
+    var longitudeElement = document.getElementById('longitude');
+    var descriptionElement = document.getElementById('description');
+
+    if (nameElement && latitudeElement && longitudeElement && descriptionElement) {
+      var locationName = nameElement.value;
+      var latitude = latitudeElement.value;
+      var longitude = longitudeElement.value;
+      var description = descriptionElement.value;
+
+      fetch('http://127.0.0.1:3000/add-location', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: locationName,
+          lat: latitude,
+          lon: longitude,
+          description: description
+        })
+      })
+      .then(response => response.text())
+      .then(data => {
+        alert(data);
+        var suggestModal = bootstrap.Modal.getInstance(document.getElementById('suggestModal'));
+        suggestModal.hide();
+        document.getElementById('suggestLocationForm').reset();
+      })
+      .catch(error => {
+        console.error('Error submitting location:', error);
+        alert('Error submitting location');
+      });
+    } else {
+      console.error('One or more form elements are missing.');
+      alert('Form elements are missing.');
     }
   });
 };

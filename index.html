@@ -36,7 +36,7 @@
         <button id="searchButton" class="btn btn-primary"><i class="fas fa-search"></i> Search</button>
       </div>
       <div class="mt-3 text-center">
-        <a href="form.html" class="btn btn-warning"><i class="fas fa-map-marker-alt"></i> Suggest Locations</a>
+        <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#suggestModal"><i class="fas fa-map-marker-alt"></i> Suggest Locations</button>
       </div>
     </div>
   </header>
@@ -55,6 +55,41 @@
     </div>
   </footer>
 
+  <!-- Modal for Suggest Location Form -->
+  <div class="modal fade" id="suggestModal" tabindex="-1" role="dialog" aria-labelledby="suggestModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="suggestModalLabel">Suggest a New Location</h5>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="suggestLocationForm">
+            <div class="form-group">
+              <label for="name">Location Name</label>
+              <input type="text" class="form-control" id="name" required>
+            </div>
+            <div class="form-group">
+              <label for="latitude">Latitude</label>
+              <input type="text" class="form-control" id="latitude" required>
+            </div>
+            <div class="form-group">
+              <label for="longitude">Longitude</label>
+              <input type="text" class="form-control" id="longitude" required>
+            </div>
+            <div class="form-group">
+              <label for="description">Description</label>
+              <textarea class="form-control" id="description" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-success">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
@@ -64,5 +99,117 @@
 
   <!-- Custom JS -->
   <script src="script.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize the map
+      var map = L.map('map').setView([28.644800, 77.216721], 12); // Delhi coordinates
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+      }).addTo(map);
+
+      // Handle form submission
+      document.getElementById('suggestLocationForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var nameElement = document.getElementById('name');
+        var latitudeElement = document.getElementById('latitude');
+        var longitudeElement = document.getElementById('longitude');
+        var descriptionElement = document.getElementById('description');
+
+        if (nameElement && latitudeElement && longitudeElement && descriptionElement) {
+          var locationName = nameElement.value;
+          var latitude = latitudeElement.value;
+          var longitude = longitudeElement.value;
+          var description = descriptionElement.value;
+
+          fetch('http://127.0.0.1:3000/add-location', { // Updated URL
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              name: locationName,
+              lat: latitude,
+              lon: longitude,
+              description: description
+            })
+          })
+          .then(response => response.text())
+          .then(data => {
+            alert(data);
+            var suggestModal = bootstrap.Modal.getInstance(document.getElementById('suggestModal'));
+            suggestModal.hide();
+            document.getElementById('suggestLocationForm').reset();
+          })
+          .catch(error => {
+            console.error('Error submitting location:', error);
+            alert('Error submitting location');
+          });
+        } else {
+          console.error('One or more form elements are missing.');
+          alert('Form elements are missing.');
+        }
+      });
+
+      // Initialize map related functionalities
+      document.getElementById('zoomIn').addEventListener('click', function() {
+        map.zoomIn();
+      });
+
+      document.getElementById('zoomOut').addEventListener('click', function() {
+        map.zoomOut();
+      });
+
+      document.getElementById('locateMe').addEventListener('click', function() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            function(position) {
+              var lat = position.coords.latitude;
+              var lon = position.coords.longitude;
+              map.setView([lat, lon], 13);
+              L.marker([lat, lon], { icon: locationMarker }).addTo(map)
+                .bindPopup("You've arrived at this spot, ready to uncover its hidden gems!")
+                .openPopup();
+            },
+            function(error) {
+              console.error('Error occurred while fetching location:', error);
+              alert('Error occurred while fetching location.');
+            },
+            {
+              enableHighAccuracy: true,
+              timeout: 5000,
+              maximumAge: 0
+            }
+          );
+        } else {
+          alert("Geolocation is not supported by this browser.");
+        }
+      });
+
+      document.getElementById('searchButton').addEventListener('click', function() {
+        var query = document.getElementById('locationSearch').value;
+        if (query) {
+          var url = `https://nominatim.openstreetmap.org/search?format=json&q=${query}`;
+          fetch(url)
+            .then(response => response.json())
+            .then(data => {
+              if (data.length > 0) {
+                var lat = data[0].lat;
+                var lon = data[0].lon;
+                map.setView([lat, lon], 13);
+                L.marker([lat, lon], { icon: locationMarker }).addTo(map)
+                  .bindPopup(`Location: ${query}`)
+                  .openPopup();
+              } else {
+                alert("Location not found.");
+              }
+            })
+            .catch(error => alert("Error fetching location data."));
+        } else {
+          alert("Please enter a location.");
+        }
+      });
+    });
+  </script>
 </body>
 </html>
