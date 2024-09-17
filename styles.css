@@ -10,22 +10,48 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  overflow-x: hidden; /* Prevent horizontal scrolling on small screens */
 }
 
 /* Header Styles */
 header {
   background-color: #333;
   color: #fff;
-  padding: 15px 0;
+  padding: 15px 20px; /* Adjust padding for better spacing on mobile */
+  text-align: center; /* Center header content for mobile */
 }
 
 header h1 {
   margin-bottom: 10px;
+  font-size: 1.5em; /* Increase font size slightly for mobile readability */
 }
 
 /* Map Container Styles */
 #map {
-  height: 80vh; /* Adjust the height as needed */
+  height: 80vh; /* Default height */
+}
+
+@media (max-width: 768px) {
+  #map {
+    height: 60vh; /* Adjust height for mobile */
+  }
+
+  /* Adjust body padding for smaller screens */
+  body {
+    padding: 0 10px;
+  }
+
+  /* Footer adjustments */
+  footer {
+    text-align: center;
+    padding: 10px 0;
+    font-size: 0.9em; /* Smaller font size for mobile */
+  }
+
+  /* Adjust d-flex class for stacking elements on mobile */
+  .d-flex {
+    flex-direction: column;
+  }
 }
 
 /* Footer Styles */
@@ -41,15 +67,5 @@ footer {
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1000;
-}
-
-/* Responsive Styles */
-@media (max-width: 768px) {
-  #map {
-    height: 60vh;
-  }
-
-  .d-flex {
-    flex-direction: column;
-  }
+  font-size: 1.2em; /* Increase loading text size for visibility on mobile */
 }
