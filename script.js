@@ -1,147 +1,139 @@
-// Define the locationMarker icon globally
-var locationMarker = L.icon({
-  iconUrl: 'locationMarker.png', // Replace with the path to your custom icon image
-  iconSize: [32, 32], // Adjust size as needed
-  iconAnchor: [16, 32], // Anchor point for the icon (half of width, full height)
-  popupAnchor: [0, -32] // Popup anchor relative to the icon
-});
+let map;
 
 window.onload = function() {
-  // Check if the map is already initialized
-  if (window.map) {
-    return;
+  if (!map) {  // Check if map is already initialized
+    map = L.map('map').setView([28.7041, 77.1025], 13);  // Initialize the map
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+  } else {
+    console.log('Map is already initialized');
   }
+
+  // Optionally add a marker
+  L.marker([28.6139, 77.209]).addTo(map).bindPopup('Hello Delhi!').openPopup();
+};
+// Wait for the document to fully load
+document.addEventListener("DOMContentLoaded", function() {
 
   // Initialize the map
-  window.map = L.map('map').setView([28.6139, 77.209], 12); // Set initial view to Delhi
+  var map = L.map('map').setView([28.6139, 77.2090], 12); // Coordinates for Delhi
 
-  // Add OpenStreetMap tiles
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
-    subdomains: 'abcd',
-    maxZoom: 19
+  // Add a colorful map tile layer (CartoDB Voyager)
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap contributors, © CartoDB'
   }).addTo(map);
 
-  // Create a marker cluster group
-  var markers = L.markerClusterGroup();
+  // Add marker for Delhi and popup
+  var marker = L.marker([28.6139, 77.2090]).addTo(map);
+  marker.bindPopup('<b>Delhi</b><br>This is the capital city of India.').openPopup();
 
-  // Function to add a marker to the map
-  function addMarker(location) {
-    var marker = L.marker([location.lat, location.lon], { icon: locationMarker })
-      .bindPopup(`<b>${location.name}</b><br>Famous Chai Tapri<br><a href="https://www.google.com/maps/search/?api=1&query=${location.lat},${location.lon}" target="_blank">View on Google Maps</a>`);
-    markers.addLayer(marker);
-  }
-
-  // Fetch and display predefined locations
-  fetch('/locations')
-    .then(response => response.json())
-    .then(data => {
-      data.forEach(location => addMarker(location));
-      map.addLayer(markers);
-    })
-    .catch(error => console.error('Error fetching locations:', error));
-
-  // Add zoom controls
-  document.getElementById('zoomIn').addEventListener('click', function() {
+  // Zoom In functionality
+  document.getElementById("zoomIn").addEventListener("click", function() {
     map.zoomIn();
   });
 
-  document.getElementById('zoomOut').addEventListener('click', function() {
+  // Zoom Out functionality
+  document.getElementById("zoomOut").addEventListener("click", function() {
     map.zoomOut();
   });
 
-  // Geolocation: Locate user on the map
-  document.getElementById('locateMe').addEventListener('click', function() {
+  // Locate Me functionality (uses browser's geolocation)
+  document.getElementById("locateMe").addEventListener("click", function() {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        function(position) {
-          var lat = position.coords.latitude;
-          var lon = position.coords.longitude;
-          map.setView([lat, lon], 13);
-          L.marker([lat, lon], { icon: locationMarker }).addTo(map)
-            .bindPopup("You've arrived at this spot, ready to uncover its hidden gems!")
-            .openPopup();
-        },
-        function(error) {
-          console.error('Error occurred while fetching location:', error);
-          alert('Error occurred while fetching location.');
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 5000,
-          maximumAge: 0
-        }
-      );
+      navigator.geolocation.getCurrentPosition(function(position) {
+        var lat = position.coords.latitude;
+        var lon = position.coords.longitude;
+        map.setView([lat, lon], 15);
+        L.marker([lat, lon]).addTo(map).bindPopup("You are here!").openPopup();
+      });
     } else {
       alert("Geolocation is not supported by this browser.");
     }
   });
 
-  // Search for a location using Nominatim (OpenStreetMap's geocoding service)
-  document.getElementById('searchButton').addEventListener('click', function() {
-    var query = document.getElementById('locationSearch').value;
-    if (query) {
-      var url = `https://nominatim.openstreetmap.org/search?format=json&q=${query}`;
-      fetch(url)
-        .then(response => response.json())
-        .then(data => {
-          if (data.length > 0) {
-            var lat = data[0].lat;
-            var lon = data[0].lon;
-            map.setView([lat, lon], 13);
-            L.marker([lat, lon], { icon: locationMarker }).addTo(map)
-              .bindPopup(`Location: ${query}`)
-              .openPopup();
-          } else {
-            alert("Location not found.");
-          }
-        })
-        .catch(error => alert("Error fetching location data."));
+  // Handle Location Search
+  document.getElementById("searchButton").addEventListener("click", function() {
+    var location = document.getElementById("locationSearch").value;
+    if (location) {
+      // You could integrate a search API to find the location. For simplicity, we'll just log it.
+      console.log("Searching for: " + location);
+      alert("Search functionality is yet to be implemented. You searched for: " + location);
     } else {
-      alert("Please enter a location.");
+      alert("Please enter a location to search.");
     }
   });
 
-  // Handle form submission
-  document.getElementById('suggestLocationForm').addEventListener('submit', function(e) {
+  // Handle Suggest Location Form Submission
+  document.getElementById("suggestLocationForm").addEventListener("submit", function(e) {
     e.preventDefault();
-    var nameElement = document.getElementById('name');
-    var latitudeElement = document.getElementById('latitude');
-    var longitudeElement = document.getElementById('longitude');
-    var descriptionElement = document.getElementById('description');
 
-    if (nameElement && latitudeElement && longitudeElement && descriptionElement) {
-      var locationName = nameElement.value;
-      var latitude = latitudeElement.value;
-      var longitude = longitudeElement.value;
-      var description = descriptionElement.value;
+    var locationName = document.getElementById("name").value;
+    var latitude = document.getElementById("latitude").value;
+    var longitude = document.getElementById("longitude").value;
+    var description = document.getElementById("description").value;
 
-      fetch('http://127.0.0.1:3000/add-location', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          name: locationName,
-          lat: latitude,
-          lon: longitude,
-          description: description
-        })
-      })
-      .then(response => response.text())
-      .then(data => {
-        alert(data);
-        var suggestModal = bootstrap.Modal.getInstance(document.getElementById('suggestModal'));
-        suggestModal.hide();
-        document.getElementById('suggestLocationForm').reset();
-      })
-      .catch(error => {
-        console.error('Error submitting location:', error);
-        alert('Error submitting location');
+    if (locationName && latitude && longitude && description) {
+      // Send data to the server
+      $.post("/add-location", {
+        name: locationName,
+        latitude: latitude,
+        longitude: longitude,
+        description: description
+      }, function(response) {
+        alert("Location suggested successfully!");
+        // Reset the form after submission
+        document.getElementById("suggestLocationForm").reset();
+      }).fail(function() {
+        alert("Failed to suggest the location.");
       });
     } else {
-      console.error('One or more form elements are missing.');
-      alert('Form elements are missing.');
+      alert("Please fill in all the fields.");
     }
   });
-};
+
+  // Handle Login Form Submission
+  document.getElementById("loginForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    var email = document.getElementById("loginEmail").value;
+    var password = document.getElementById("loginPassword").value;
+
+    if (email && password) {
+      // Send login data to the server
+      $.post("/login", { email: email, password: password }, function(response) {
+        alert("Logged in successfully!");
+        // Close the modal
+        $('#loginModal').modal('hide');
+      }).fail(function() {
+        alert("Login failed. Please check your credentials.");
+      });
+    } else {
+      alert("Please enter both email and password.");
+    }
+  });
+
+  // Handle Sign-Up Form Submission
+  document.getElementById("signupForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    var name = document.getElementById("signupName").value;
+    var email = document.getElementById("signupEmail").value;
+    var password = document.getElementById("signupPassword").value;
+
+    if (name && email && password) {
+      // Send sign-up data to the server
+      $.post("/signup", { name: name, email: email, password: password }, function(response) {
+        alert("Signed up successfully!");
+        // Close the modal
+        $('#signupModal').modal('hide');
+      }).fail(function() {
+        alert("Sign-up failed. Please try again.");
+      });
+    } else {
+      alert("Please fill in all the fields.");
+    }
+  });
+
+});

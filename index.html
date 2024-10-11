@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
   <title>Map Interface</title>
 
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
 
@@ -24,6 +25,9 @@
 
   <!-- Custom CSS -->
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 
@@ -37,12 +41,19 @@
       </div>
       <div class="mt-3 text-center">
         <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#suggestModal"><i class="fas fa-map-marker-alt"></i> Suggest Locations</button>
+        <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="fas fa-sign-in-alt"></i> Login</button>
+        <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#signupModal"><i class="fas fa-user-plus"></i> Sign Up</button>
       </div>
     </div>
   </header>
 
   <!-- Map Container -->
-  <div id="map" class="animate__animated animate__fadeIn"></div>
+  <div id="map" class="animate__animated animate__fadeIn" style="height: 500px;"></div>
+
+  <!-- Directions Button -->
+  <div id="directionsContainer" class="mt-3 text-center d-none">
+    <button id="getDirections" class="btn btn-success"><i class="fas fa-directions"></i> Get Directions</button>
+  </div>
 
   <!-- Footer Section with Zoom Controls -->
   <footer class="bg-light text-center p-3">
@@ -90,8 +101,67 @@
     </div>
   </div>
 
+  <!-- Modal for Login -->
+  <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="loginModalLabel">Login</h5>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="loginForm">
+            <div class="form-group">
+              <label for="loginEmail">Email</label>
+              <input type="email" class="form-control" id="loginEmail" required>
+            </div>
+            <div class="form-group">
+              <label for="loginPassword">Password</label>
+              <input type="password" class="form-control" id="loginPassword" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Sign Up -->
+  <div class="modal fade" id="signupModal" tabindex="-1" role="dialog" aria-labelledby="signupModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="signupModalLabel">Sign Up</h5>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="signupForm">
+            <div class="form-group">
+              <label for="signupName">Name</label>
+              <input type="text" class="form-control" id="signupName" required>
+            </div>
+            <div class="form-group">
+              <label for="signupEmail">Email</label>
+              <input type="email" class="form-control" id="signupEmail" required>
+            </div>
+            <div class="form-group">
+              <label for="signupPassword">Password</label>
+              <input type="password" class="form-control" id="signupPassword" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Sign Up</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 
   <!-- Bootstrap JS -->
@@ -101,115 +171,21 @@
   <script src="script.js"></script>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    window.onload = function() {
       // Initialize the map
-      var map = L.map('map').setView([28.644800, 77.216721], 12); // Delhi coordinates
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-      }).addTo(map);
+      var map = L.map('map').setView([28.6139, 77.2090], 12); // Coordinates for Delhi
 
-      // Handle form submission
-      document.getElementById('suggestLocationForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-        var nameElement = document.getElementById('name');
-        var latitudeElement = document.getElementById('latitude');
-        var longitudeElement = document.getElementById('longitude');
-        var descriptionElement = document.getElementById('description');
+      // Add tile layer from CartoDB Positron (Colorful Map)
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap contributors, © CartoDB'
+}).addTo(map);
 
-        if (nameElement && latitudeElement && longitudeElement && descriptionElement) {
-          var locationName = nameElement.value;
-          var latitude = latitudeElement.value;
-          var longitude = longitudeElement.value;
-          var description = descriptionElement.value;
-
-          fetch('http://127.0.0.1:3000/add-location', { // Updated URL
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              name: locationName,
-              lat: latitude,
-              lon: longitude,
-              description: description
-            })
-          })
-          .then(response => response.text())
-          .then(data => {
-            alert(data);
-            var suggestModal = bootstrap.Modal.getInstance(document.getElementById('suggestModal'));
-            suggestModal.hide();
-            document.getElementById('suggestLocationForm').reset();
-          })
-          .catch(error => {
-            console.error('Error submitting location:', error);
-            alert('Error submitting location');
-          });
-        } else {
-          console.error('One or more form elements are missing.');
-          alert('Form elements are missing.');
-        }
-      });
-
-      // Initialize map related functionalities
-      document.getElementById('zoomIn').addEventListener('click', function() {
-        map.zoomIn();
-      });
-
-      document.getElementById('zoomOut').addEventListener('click', function() {
-        map.zoomOut();
-      });
-
-      document.getElementById('locateMe').addEventListener('click', function() {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            function(position) {
-              var lat = position.coords.latitude;
-              var lon = position.coords.longitude;
-              map.setView([lat, lon], 13);
-              L.marker([lat, lon], { icon: locationMarker }).addTo(map)
-                .bindPopup("You've arrived at this spot, ready to uncover its hidden gems!")
-                .openPopup();
-            },
-            function(error) {
-              console.error('Error occurred while fetching location:', error);
-              alert('Error occurred while fetching location.');
-            },
-            {
-              enableHighAccuracy: true,
-              timeout: 5000,
-              maximumAge: 0
-            }
-          );
-        } else {
-          alert("Geolocation is not supported by this browser.");
-        }
-      });
-
-      document.getElementById('searchButton').addEventListener('click', function() {
-        var query = document.getElementById('locationSearch').value;
-        if (query) {
-          var url = `https://nominatim.openstreetmap.org/search?format=json&q=${query}`;
-          fetch(url)
-            .then(response => response.json())
-            .then(data => {
-              if (data.length > 0) {
-                var lat = data[0].lat;
-                var lon = data[0].lon;
-                map.setView([lat, lon], 13);
-                L.marker([lat, lon], { icon: locationMarker }).addTo(map)
-                  .bindPopup(`Location: ${query}`)
-                  .openPopup();
-              } else {
-                alert("Location not found.");
-              }
-            })
-            .catch(error => alert("Error fetching location data."));
-        } else {
-          alert("Please enter a location.");
-        }
-      });
-    });
+      // Add marker and popup for a location
+      var marker = L.marker([28.6139, 77.2090]).addTo(map);
+      marker.bindPopup('<b>Delhi</b><br>This is the capital city of India.').openPopup();
+    }
   </script>
+
 </body>
 </html>
