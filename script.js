@@ -1,34 +1,23 @@
 let map;
+let points = 0; // Initialize points variable
 
 window.onload = function() {
-  if (!map) {  // Check if map is already initialized
-    map = L.map('map').setView([28.7041, 77.1025], 13);  // Initialize the map
+  // Initialize the map only if it hasn't been initialized yet
+  if (!map) {
+    map = L.map('map').setView([28.7041, 77.1025], 13); // Delhi coordinates
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
+
+    // Add a marker to the map
+    L.marker([28.6139, 77.209]).addTo(map).bindPopup('Hello Delhi!').openPopup();
   } else {
     console.log('Map is already initialized');
   }
-
-  // Optionally add a marker
-  L.marker([28.6139, 77.209]).addTo(map).bindPopup('Hello Delhi!').openPopup();
 };
-// Wait for the document to fully load
+
+// Wait for the document to fully load before adding event listeners
 document.addEventListener("DOMContentLoaded", function() {
-
-  // Initialize the map
-  var map = L.map('map').setView([28.6139, 77.2090], 12); // Coordinates for Delhi
-
-  // Add a colorful map tile layer (CartoDB Voyager)
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-    maxZoom: 19,
-    attribution: '© OpenStreetMap contributors, © CartoDB'
-  }).addTo(map);
-
-  // Add marker for Delhi and popup
-  var marker = L.marker([28.6139, 77.2090]).addTo(map);
-  marker.bindPopup('<b>Delhi</b><br>This is the capital city of India.').openPopup();
-
   // Zoom In functionality
   document.getElementById("zoomIn").addEventListener("click", function() {
     map.zoomIn();
@@ -43,8 +32,8 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("locateMe").addEventListener("click", function() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function(position) {
-        var lat = position.coords.latitude;
-        var lon = position.coords.longitude;
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
         map.setView([lat, lon], 15);
         L.marker([lat, lon]).addTo(map).bindPopup("You are here!").openPopup();
       });
@@ -55,9 +44,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Handle Location Search
   document.getElementById("searchButton").addEventListener("click", function() {
-    var location = document.getElementById("locationSearch").value;
+    const location = document.getElementById("locationSearch").value;
     if (location) {
-      // You could integrate a search API to find the location. For simplicity, we'll just log it.
       console.log("Searching for: " + location);
       alert("Search functionality is yet to be implemented. You searched for: " + location);
     } else {
@@ -66,74 +54,108 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 
   // Handle Suggest Location Form Submission
-  document.getElementById("suggestLocationForm").addEventListener("submit", function(e) {
+  document.getElementById("suggestLocationForm").addEventListener("submit", async function(e) {
     e.preventDefault();
 
-    var locationName = document.getElementById("name").value;
-    var latitude = document.getElementById("latitude").value;
-    var longitude = document.getElementById("longitude").value;
-    var description = document.getElementById("description").value;
+    const locationName = document.getElementById("name").value;
+    const latitude = document.getElementById("latitude").value;
+    const longitude = document.getElementById("longitude").value;
+    const description = document.getElementById("description").value;
 
     if (locationName && latitude && longitude && description) {
-      // Send data to the server
-      $.post("/add-location", {
-        name: locationName,
-        latitude: latitude,
-        longitude: longitude,
-        description: description
-      }, function(response) {
-        alert("Location suggested successfully!");
-        // Reset the form after submission
-        document.getElementById("suggestLocationForm").reset();
-      }).fail(function() {
-        alert("Failed to suggest the location.");
-      });
+      try {
+        const response = await fetch("http://localhost:3000/add-location", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: locationName,
+            latitude: latitude,
+            longitude: longitude,
+            description: description,
+          }),
+        });
+
+        if (response.ok) {
+          points += 10; // Increment points by 10
+          document.getElementById("pointsButton").textContent = `Points: ${points}`; // Update points display
+          alert("Location suggested successfully!");
+          document.getElementById("suggestLocationForm").reset(); // Reset the form after submission
+        } else {
+          throw new Error("Failed to suggest the location.");
+        }
+      } catch (error) {
+        alert(error.message);
+      }
     } else {
       alert("Please fill in all the fields.");
     }
   });
 
   // Handle Login Form Submission
-  document.getElementById("loginForm").addEventListener("submit", function(e) {
+  document.getElementById("loginForm").addEventListener("submit", async function(e) {
     e.preventDefault();
 
-    var email = document.getElementById("loginEmail").value;
-    var password = document.getElementById("loginPassword").value;
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
 
     if (email && password) {
-      // Send login data to the server
-      $.post("/login", { email: email, password: password }, function(response) {
-        alert("Logged in successfully!");
-        // Close the modal
-        $('#loginModal').modal('hide');
-      }).fail(function() {
-        alert("Login failed. Please check your credentials.");
-      });
+      try {
+        const response = await fetch("http://localhost:3000/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (response.ok) {
+          alert("Logged in successfully!");
+          $('#loginModal').modal('hide'); // Close the modal
+        } else {
+          throw new Error("Login failed. Please check your credentials.");
+        }
+      } catch (error) {
+        alert(error.message);
+      }
     } else {
       alert("Please enter both email and password.");
     }
   });
 
   // Handle Sign-Up Form Submission
-  document.getElementById("signupForm").addEventListener("submit", function(e) {
+  document.getElementById("signupForm").addEventListener("submit", async function(e) {
     e.preventDefault();
 
-    var name = document.getElementById("signupName").value;
-    var email = document.getElementById("signupEmail").value;
-    var password = document.getElementById("signupPassword").value;
+    const name = document.getElementById("signupName").value;
+    const email = document.getElementById("signupEmail").value;
+    const password = document.getElementById("signupPassword").value;
 
+    // Validate input
     if (name && email && password) {
-      // Send sign-up data to the server
-      $.post("/signup", { name: name, email: email, password: password }, function(response) {
-        alert("Signed up successfully!");
-        // Close the modal
-        $('#signupModal').modal('hide');
-      }).fail(function() {
-        alert("Sign-up failed. Please try again.");
-      });
+      try {
+        const response = await fetch("http://localhost:3000/signup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name, email, password }),
+        });
+
+        if (response.ok) {
+          alert("Signed up successfully!");
+          $('#signupModal').modal('hide'); // Close the modal
+          // Optionally redirect or log in the user here
+        } else {
+          const errorData = await response.json(); // Get error message from server
+          throw new Error(errorData.message || "Sign-up failed. Please try again.");
+        }
+      } catch (error) {
+        alert(error.message); // Show error message
+      }
     } else {
-      alert("Please fill in all the fields.");
+      alert("Please fill in all the fields."); // Prompt to fill all fields
     }
   });
-
 });

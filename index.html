@@ -43,9 +43,12 @@
         <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#suggestModal"><i class="fas fa-map-marker-alt"></i> Suggest Locations</button>
         <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="fas fa-sign-in-alt"></i> Login</button>
         <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#signupModal"><i class="fas fa-user-plus"></i> Sign Up</button>
+        <div class="mt-2">
+          <button id="pointsButton" class="btn btn-info">Points: 0</button> <!-- Points button -->
+        </div>
       </div>
     </div>
-  </header>
+  </header>  
 
   <!-- Map Container -->
   <div id="map" class="animate__animated animate__fadeIn" style="height: 500px;"></div>
@@ -169,23 +172,6 @@
 
   <!-- Custom JS -->
   <script src="script.js"></script>
-
-  <script>
-    window.onload = function() {
-      // Initialize the map
-      var map = L.map('map').setView([28.6139, 77.2090], 12); // Coordinates for Delhi
-
-      // Add tile layer from CartoDB Positron (Colorful Map)
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-    maxZoom: 19,
-    attribution: '© OpenStreetMap contributors, © CartoDB'
-}).addTo(map);
-
-      // Add marker and popup for a location
-      var marker = L.marker([28.6139, 77.2090]).addTo(map);
-      marker.bindPopup('<b>Delhi</b><br>This is the capital city of India.').openPopup();
-    }
-  </script>
-
+  
 </body>
 </html>
