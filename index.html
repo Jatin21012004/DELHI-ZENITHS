@@ -110,31 +110,32 @@
 <body class="font-roboto">
 
   <!-- Header Section with Dark Navbar -->
-  <header>
-    <nav class="p-4">
-      <div class="container mx-auto flex justify-between items-center">
-        <a class="text-xl font-bold" href="#">DELHI-ZENITHS</a>
-        <div class="flex items-center space-x-2">
-          <input type="text" id="locationSearch" class="form-input rounded-l p-2" placeholder="Search a location..." />
-          <button id="searchButton" class="btn btn-primary"><i class="fas fa-search"></i> Search</button>
-        </div>
-        <ul class="flex items-center space-x-2">
-          <li>
-            <button class="btn btn-yellow" data-bs-toggle="modal" data-bs-target="#suggestModal"><i class="fas fa-map-marker-alt"></i> Suggest Locations</button>
-          </li>
-          <li>
-            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="fas fa-sign-in-alt"></i> Login</button>
-          </li>
-          <li>
-            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#signupModal"><i class="fas fa-user-plus"></i> Sign Up</button>
-          </li>
-          <li>
-            <button id="pointsButton" class="btn btn-teal">Points: 0</button>
-          </li>
-        </ul>
+  <!-- Header Section with Dark Navbar -->
+<header>
+  <nav class="p-4">
+    <div class="container mx-auto flex justify-between items-center">
+      <a class="text-xl font-bold" href="#">DELHI-ZENITHS</a>
+      <div class="flex items-center space-x-2">
+        <input type="text" id="locationSearch" class="form-input rounded-l p-2" placeholder="Search a location..." />
+        <button id="searchButton" class="btn btn-primary"><i class="fas fa-search"></i> Search</button>
       </div>
-    </nav>
-  </header>
+      <ul class="flex items-center space-x-2">
+        <li>
+          <button class="btn btn-yellow" data-bs-toggle="modal" data-bs-target="#suggestModal"><i class="fas fa-map-marker-alt"></i> Suggest Locations</button>
+        </li>
+        <li>
+          <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="fas fa-sign-in-alt"></i> Login</button>
+        </li>
+        <li>
+          <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#signupModal"><i class="fas fa-user-plus"></i> Sign Up</button>
+        </li>
+        <li>
+          <button id="pointsButton" class="btn btn-teal">Points: 0</button>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>
 
   <!-- Map Container -->
   <div id="map" class="animate__animated animate__fadeIn" style="height: 500px;"></div>
