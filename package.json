@@ -1,15 +1,39 @@
 {
-  "name": "mymapproject",
-  "version": "1.0.0",
-  "main": "script.js",
+  "name": "wide-align",
+  "version": "1.1.5",
+  "description": "A wide-character aware text alignment function for use on the console or with fixed width fonts.",
+  "main": "align.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tap --coverage test/*.js",
+    "build": "npm run build:css",
+    "build:css": "tailwindcss -i ./styles.css -o ./dist/output.css --watch"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "wide",
+    "double",
+    "unicode",
+    "cjkv",
+    "pad",
+    "align"
+  ],
+  "author": "Rebecca Turner <me@re-becca.org> (http://re-becca.org/)",
   "license": "ISC",
-  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iarna/wide-align"
+  },
   "dependencies": {
-    "mongodb": "^6.8.1"
-  }
+    "autoprefixer": "^10.4.20",
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "postcss": "^8.4.47",
+    "string-width": "^1.0.2 || 2 || 3 || 4",
+    "tailwindcss": "^3.4.14"
+  },
+  "devDependencies": {
+    "tap": "*"
+  },
+  "files": [
+    "align.js"
+  ]
 }

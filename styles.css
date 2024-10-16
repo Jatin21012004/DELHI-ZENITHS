@@ -1,71 +1,51 @@
-/* General Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+<!-- Tailwind CSS -->
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  overflow-x: hidden; /* Prevent horizontal scrolling on small screens */
-}
-
-/* Header Styles */
-header {
-  background-color: #333;
-  color: #fff;
-  padding: 15px 20px; /* Adjust padding for better spacing on mobile */
-  text-align: center; /* Center header content for mobile */
-}
-
-header h1 {
-  margin-bottom: 10px;
-  font-size: 1.5em; /* Increase font size slightly for mobile readability */
-}
-
-/* Map Container Styles */
-#map {
-  height: 80vh; /* Default height */
-}
-
-@media (max-width: 768px) {
-  #map {
-    height: 60vh; /* Adjust height for mobile */
-  }
-
-  /* Adjust body padding for smaller screens */
+<style>
   body {
-    padding: 0 10px;
+    background-color: #121212; /* Dark background */
+    color: #E0E0E0; /* Light text */
+  }
+  
+  /* Map container styling for dark theme */
+  #map {
+    background-color: #181818;
+    border: 1px solid #2C3E50;
   }
 
-  /* Footer adjustments */
+  /* Dark theme for navbar */
+  .navbar {
+    background-color: #2C3E50; /* Dark blue-gray */
+    color: #E0E0E0;
+  }
+  
+  /* Button Styling */
+  .btn-primary {
+    background-color: #008080; /* Deep teal */
+    color: white;
+  }
+
+  .btn-secondary {
+    background-color: #4A6C82; /* Muted gray-blue */
+    color: white;
+  }
+
+  /* Modals and Forms */
+  .modal-content {
+    background-color: #1E1E1E; /* Dark background for modals */
+    color: #E0E0E0;
+  }
+  
+  /* Input Styling */
+  .form-input, .form-textarea {
+    background-color: #333333;
+    color: #E0E0E0;
+    border-color: #4A6C82;
+  }
+
+  /* Footer Styling */
   footer {
-    text-align: center;
-    padding: 10px 0;
-    font-size: 0.9em; /* Smaller font size for mobile */
+    background-color: #2C3E50;
+    color: #E0E0E0;
   }
-
-  /* Adjust d-flex class for stacking elements on mobile */
-  .d-flex {
-    flex-direction: column;
-  }
-}
-
-/* Footer Styles */
-footer {
-  background-color: #f8f9fa;
-  padding: 15px 0;
-}
-
-/* Loading Indicator */
-#loading {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1000;
-  font-size: 1.2em; /* Increase loading text size for visibility on mobile */
-}
+</style>

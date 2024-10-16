@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-  <title>Map Interface</title>
+  <title>Dark Themed Map Interface</title>
 
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
 
   <!-- Google Fonts -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" />
@@ -17,52 +18,120 @@
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+  <!-- Tailwind CSS (from local build) -->
+  <link href="dist/output.css" rel="stylesheet">
 
   <!-- Animate.css -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="styles.css" />
-
   <!-- jQuery -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
-<body>
 
-  <!-- Header Section with Navbar -->
+  <!-- Bootstrap CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+  
+  <style>
+    /* Custom Dark Theme Styles */
+    body {
+      background-color: #121212; /* Dark background */
+      color: #E0E0E0; /* Light text */
+    }
+
+    /* Navbar */
+    nav {
+      background-color: #2C3E50; /* Dark blue-gray */
+    }
+
+    nav a {
+      color: #E0E0E0;
+    }
+
+    .navbar input, .navbar button {
+      background-color: #333;
+      border: none;
+      color: #E0E0E0;
+    }
+
+    /* Map container */
+    #map {
+      background-color: #181818;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #2C3E50;
+      color: #E0E0E0;
+    }
+
+    /* Button colors */
+    .btn-primary {
+      background-color: #008080; /* Teal */
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background-color: #4A6C82; /* Cool gray-blue */
+      color: #fff;
+    }
+
+    .btn-teal {
+      background-color: #008080;
+      color: #fff;
+    }
+
+    .btn-green {
+      background-color: #28A745;
+      color: #fff;
+    }
+
+    .btn-yellow {
+      background-color: #FFC107;
+      color: #fff;
+    }
+
+    .btn-red {
+      background-color: #DC3545;
+      color: #fff;
+    }
+
+    .modal-content {
+      background-color: #1E1E1E; /* Dark background for modals */
+      color: #E0E0E0;
+    }
+
+    .form-input, .form-textarea {
+      background-color: #333;
+      color: #E0E0E0;
+      border-color: #4A6C82;
+    }
+  </style>
+
+</head>
+<body class="font-roboto">
+
+  <!-- Header Section with Dark Navbar -->
   <header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-3">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">DELHI-ZENITHS</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
-          aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse mt-2 mt-lg-0" id="navbarNavDropdown">
-          <div class="d-flex align-items-center me-auto">
-            <input type="text" id="locationSearch" class="form-control me-2" placeholder="Search a location..." />
-            <button id="searchButton" class="btn btn-primary me-3"><i class="fas fa-search"></i> Search</button>
-          </div>
-          <ul class="navbar-nav align-items-center">
-            <li class="nav-item me-2">
-              <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#suggestModal"><i
-                  class="fas fa-map-marker-alt"></i> Suggest Locations</button>
-            </li>
-            <li class="nav-item me-2">
-              <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#loginModal"><i
-                  class="fas fa-sign-in-alt"></i> Login</button>
-            </li>
-            <li class="nav-item me-2">
-              <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#signupModal"><i
-                  class="fas fa-user-plus"></i> Sign Up</button>
-            </li>
-            <li class="nav-item">
-              <button id="pointsButton" class="btn btn-info">Points: 0</button>
-            </li>
-          </ul>
+    <nav class="p-4">
+      <div class="container mx-auto flex justify-between items-center">
+        <a class="text-xl font-bold" href="#">DELHI-ZENITHS</a>
+        <div class="flex items-center space-x-2">
+          <input type="text" id="locationSearch" class="form-input rounded-l p-2" placeholder="Search a location..." />
+          <button id="searchButton" class="btn btn-primary"><i class="fas fa-search"></i> Search</button>
         </div>
+        <ul class="flex items-center space-x-2">
+          <li>
+            <button class="btn btn-yellow" data-bs-toggle="modal" data-bs-target="#suggestModal"><i class="fas fa-map-marker-alt"></i> Suggest Locations</button>
+          </li>
+          <li>
+            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="fas fa-sign-in-alt"></i> Login</button>
+          </li>
+          <li>
+            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#signupModal"><i class="fas fa-user-plus"></i> Sign Up</button>
+          </li>
+          <li>
+            <button id="pointsButton" class="btn btn-teal">Points: 0</button>
+          </li>
+        </ul>
       </div>
     </nav>
   </header>
@@ -71,51 +140,48 @@
   <div id="map" class="animate__animated animate__fadeIn" style="height: 500px;"></div>
 
   <!-- Directions Button -->
-  <div id="directionsContainer" class="mt-3 text-center d-none">
-    <button id="getDirections" class="btn btn-success"><i class="fas fa-directions"></i> Get Directions</button>
+  <div id="directionsContainer" class="mt-3 text-center hidden">
+    <button id="getDirections" class="btn btn-green"><i class="fas fa-directions"></i> Get Directions</button>
   </div>
 
   <!-- Footer Section with Zoom Controls -->
-  <footer class="bg-light text-center p-3">
-    <div class="container">
-      <div class="d-flex justify-content-center">
-        <button id="zoomIn" class="btn btn-success mx-2"><i class="fas fa-plus"></i> Zoom In</button>
-        <button id="zoomOut" class="btn btn-danger mx-2"><i class="fas fa-minus"></i> Zoom Out</button>
-        <button id="locateMe" class="btn btn-info mx-2"><i class="fas fa-location-arrow"></i> Locate Me</button>
+  <footer class="text-center p-3">
+    <div class="container mx-auto">
+      <div class="flex justify-center space-x-2">
+        <button id="zoomIn" class="btn btn-green"><i class="fas fa-plus"></i> Zoom In</button>
+        <button id="zoomOut" class="btn btn-red"><i class="fas fa-minus"></i> Zoom Out</button>
+        <button id="locateMe" class="btn btn-teal"><i class="fas fa-location-arrow"></i> Locate Me</button>
       </div>
     </div>
   </footer>
 
   <!-- Modal for Suggest Location Form -->
-  <div class="modal fade" id="suggestModal" tabindex="-1" role="dialog" aria-labelledby="suggestModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
+  <div class="modal fade" id="suggestModal" tabindex="-1" aria-labelledby="suggestModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="suggestModalLabel">Suggest a New Location</h5>
-          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <form id="suggestLocationForm">
-            <div class="form-group">
-              <label for="name">Location Name</label>
-              <input type="text" class="form-control" id="name" required>
+            <div class="mb-4">
+              <label for="name" class="block">Location Name</label>
+              <input type="text" class="form-input border rounded w-full" id="name" required>
             </div>
-            <div class="form-group">
-              <label for="latitude">Latitude</label>
-              <input type="text" class="form-control" id="latitude" required>
+            <div class="mb-4">
+              <label for="latitude" class="block">Latitude</label>
+              <input type="text" class="form-input border rounded w-full" id="latitude" required>
             </div>
-            <div class="form-group">
-              <label for="longitude">Longitude</label>
-              <input type="text" class="form-control" id="longitude" required>
+            <div class="mb-4">
+              <label for="longitude" class="block">Longitude</label>
+              <input type="text" class="form-input border rounded w-full" id="longitude" required>
             </div>
-            <div class="form-group">
-              <label for="description">Description</label>
-              <textarea class="form-control" id="description" rows="3" required></textarea>
+            <div class="mb-4">
+              <label for="description" class="block">Description</label>
+              <textarea class="form-textarea border rounded w-full" id="description" rows="3" required></textarea>
             </div>
-            <button type="submit" class="btn btn-success mt-3">Submit</button>
+            <button type="submit" class="btn btn-green mt-3">Submit</button>
           </form>
         </div>
       </div>
@@ -123,25 +189,22 @@
   </div>
 
   <!-- Modal for Login -->
-  <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="loginModalLabel">Login</h5>
-          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <form id="loginForm">
-            <div class="form-group">
-              <label for="loginEmail">Email</label>
-              <input type="email" class="form-control" id="loginEmail" required>
+            <div class="mb-4">
+              <label for="loginEmail" class="block">Email</label>
+              <input type="email" class="form-input border rounded w-full" id="loginEmail" required>
             </div>
-            <div class="form-group">
-              <label for="loginPassword">Password</label>
-              <input type="password" class="form-control" id="loginPassword" required>
+            <div class="mb-4">
+              <label for="loginPassword" class="block">Password</label>
+              <input type="password" class="form-input border rounded w-full" id="loginPassword" required>
             </div>
             <button type="submit" class="btn btn-primary mt-3">Login</button>
           </form>
@@ -151,29 +214,26 @@
   </div>
 
   <!-- Modal for Sign Up -->
-  <div class="modal fade" id="signupModal" tabindex="-1" role="dialog" aria-labelledby="signupModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
+  <div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="signupModalLabel">Sign Up</h5>
-          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <form id="signupForm">
-            <div class="form-group">
-              <label for="signupName">Name</label>
-              <input type="text" class="form-control" id="signupName" required>
+            <div class="mb-4">
+              <label for="signupName" class="block">Name</label>
+              <input type="text" class="form-input border rounded w-full" id="signupName" required>
             </div>
-            <div class="form-group">
-              <label for="signupEmail">Email</label>
-              <input type="email" class="form-control" id="signupEmail" required>
+            <div class="mb-4">
+              <label for="signupEmail" class="block">Email</label>
+              <input type="email" class="form-input border rounded w-full" id="signupEmail" required>
             </div>
-            <div class="form-group">
-              <label for="signupPassword">Password</label>
-              <input type="password" class="form-control" id="signupPassword" required>
+            <div class="mb-4">
+              <label for="signupPassword" class="block">Password</label>
+              <input type="password" class="form-input border rounded w-full" id="signupPassword" required>
             </div>
             <button type="submit" class="btn btn-primary mt-3">Sign Up</button>
           </form>
@@ -186,6 +246,7 @@
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+  <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 
   <!-- Bootstrap JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>

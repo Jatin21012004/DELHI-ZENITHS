@@ -1,5 +1,6 @@
 let map;
 let points = 0; // Initialize points variable
+let geocoder; // Initialize geocoder variable
 
 window.onload = function() {
   // Initialize the map only if it hasn't been initialized yet
@@ -8,6 +9,9 @@ window.onload = function() {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
+
+    // Initialize the geocoder
+    geocoder = L.Control.Geocoder.nominatim();
 
     // Add a marker to the map
     L.marker([28.6139, 77.209]).addTo(map).bindPopup('Hello Delhi!').openPopup();
@@ -47,7 +51,21 @@ document.addEventListener("DOMContentLoaded", function() {
     const location = document.getElementById("locationSearch").value;
     if (location) {
       console.log("Searching for: " + location);
-      alert("Search functionality is yet to be implemented. You searched for: " + location);
+      
+      // Use geocoder to find the location
+      geocoder.geocode(location, function(results) {
+        if (results && results.length > 0) {
+          const latLng = results[0].center; // Get the coordinates of the first result
+          map.setView(latLng, 13); // Center the map on the searched location
+
+          // Add a marker at the searched location
+          L.marker(latLng).addTo(map)
+            .bindPopup("You searched for: " + location)
+            .openPopup();
+        } else {
+          alert("Location not found. Please try again.");
+        }
+      });
     } else {
       alert("Please enter a location to search.");
     }
