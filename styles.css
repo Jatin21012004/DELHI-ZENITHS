@@ -1,51 +1,32 @@
-<!-- Tailwind CSS -->
-<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-<style>
-  body {
-    background-color: #121212; /* Dark background */
-    color: #E0E0E0; /* Light text */
-  }
-  
-  /* Map container styling for dark theme */
-  #map {
-    background-color: #181818;
-    border: 1px solid #2C3E50;
-  }
+/* Custom button styles */
+.btn {
+  @apply px-4 py-2 rounded font-semibold;
+}
 
-  /* Dark theme for navbar */
-  .navbar {
-    background-color: #2C3E50; /* Dark blue-gray */
-    color: #E0E0E0;
-  }
-  
-  /* Button Styling */
-  .btn-primary {
-    background-color: #008080; /* Deep teal */
-    color: white;
-  }
+.btn-primary {
+  @apply bg-blue-500 text-white;
+}
 
-  .btn-secondary {
-    background-color: #4A6C82; /* Muted gray-blue */
-    color: white;
-  }
+.btn-secondary {
+  @apply bg-gray-200 text-gray-800;
+}
 
-  /* Modals and Forms */
-  .modal-content {
-    background-color: #1E1E1E; /* Dark background for modals */
-    color: #E0E0E0;
-  }
-  
-  /* Input Styling */
-  .form-input, .form-textarea {
-    background-color: #333333;
-    color: #E0E0E0;
-    border-color: #4A6C82;
-  }
+.btn-green {
+  @apply bg-green-500 text-white;
+}
 
-  /* Footer Styling */
-  footer {
-    background-color: #2C3E50;
-    color: #E0E0E0;
-  }
-</style>
+.btn-red {
+  @apply bg-red-500 text-white;
+}
+
+.btn-teal {
+  @apply bg-teal-500 text-white;
+}
+
+.btn-yellow {
+  @apply bg-yellow-400 text-white;
+}
