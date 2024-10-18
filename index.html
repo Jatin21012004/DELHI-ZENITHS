@@ -33,6 +33,26 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
   
     <style>
+      /* Responsive styles */
+@media (max-width: 768px) {
+  .desktop-nav {
+    display: none;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-nav {
+    display: none;
+  }
+}
+
+/* Additional padding for mobile view */
+@media (max-width: 576px) {
+  nav {
+    padding: 1rem;
+  }
+}
+
       /* Custom Light Theme Styles */
       body {
         background-color: #f8f9fa; /* Light background */
@@ -260,10 +280,6 @@
     </ul>
   </nav>
 </header>
-
-
-
-
 
   <!-- Map Container -->
   <div id="map" class="animate__animated animate__fadeIn"></div>
