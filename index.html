@@ -1,156 +1,277 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-  <title>Dark Themed Map Interface</title>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Light Themed Map Interface</title>
+  
+    <!-- Mapbox CSS -->
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
+    
+    <!-- Mapbox Directions CSS -->
+    <link href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.0/mapbox-gl-directions.css' rel='stylesheet' />
+    
+    <!-- Mapbox Geocoder CSS -->
+    <link href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css' rel='stylesheet' />
 
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" />
+  
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  
+    <!-- Tailwind CSS (via CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+  
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+  
+    <style>
+      /* Custom Light Theme Styles */
+      body {
+        background-color: #f8f9fa; /* Light background */
+        color: #212529; /* Dark text */
+        font-family: 'Roboto', sans-serif;
+      }
+  
+      /* Navbar */
+      nav {
+        background-color: #12243b; /* Bootstrap primary */
+      }
+  
+      nav a {
+        color: #E0E0E0;
+      }
+  
+      .navbar input, .navbar button {
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        color: #212529;
+      }
+  
+      /* Map container */
+      #map {
+        background-color: #ffffff; /* White background */
+        height: 500px; /* Set map height */
+      }
+  
+      /* Footer */
+      footer {
+        background-color: #007bff; /* Bootstrap primary */
+        color: #ffffff;
+      }
+  
+      /* Button colors */
+      .btn-primary {
+        background-color: #007bff; /* Bootstrap primary */
+        color: #fff;
+      }
+  
+      .modal-content {
+        background-color: #ffffff; /* Light background for modals */
+        color: #212529;
+      }
+  
+      .form-input, .form-textarea {
+        background-color: #ffffff; /* White background */
+        color: #212529;
+        border: 1px solid #ccc;
+      }
+  
+      /* Suggestions List Styles */
+      .suggestions-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        position: absolute;
+        background-color: #ffffff; /* Light background for suggestions */
+        width: calc(100% - 2rem); /* Adjust width to fit input */
+        z-index: 1000;
+        border: 1px solid #ccc;
+        max-height: 200px;
+        overflow-y: auto;
+      }
+  
+      .suggestions-list li {
+        padding: 10px;
+        cursor: pointer;
+        color: #212529; /* Dark text for suggestions */
+      }
+  
+      .suggestions-list li:hover {
+        background-color: #f1f1f1; /* Light hover effect */
+      }
+  
+      /* Mapbox Directions Panel */
+      .mapbox-directions-component {
+        background-color: #fff !important; /* White background for directions panel */
+        color: #212529 !important; /* Dark text for directions panel */
+      }
+      
+      .mapbox-directions-route-summary {
+        font-weight: 700; /* Bold route summary text */
+      }
+      
+      .mapbox-directions-step {
+        border-bottom: 1px solid #ccc; /* Light border between steps */
+      }
+  
+      /* Tooltip for markers */
+      .mapboxgl-popup-content {
+        background-color: #ffffff; /* White background for popup */
+        color: #212529; /* Dark text */
+      }
 
-  <!-- Google Fonts -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" />
-
-  <!-- FontAwesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-
-  <!-- Tailwind CSS (via CDN) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Animate.css -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-
-  <!-- jQuery -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-  <!-- Bootstrap CSS -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
-
-  <style>
-    /* Custom Dark Theme Styles */
-    body {
-      background-color: #121212; /* Dark background */
-      color: #E0E0E0; /* Light text */
+      .mapboxgl-ctrl-geocoder {
+      display: none; /* Hide the entire control */
     }
+    <style>
+  /* Hide the default Geocoder input */
+  .mapboxgl-ctrl-geocoder {
+    display: none; /* Hide the entire control */
+  }
 
-    /* Navbar */
-    nav {
-      background-color: #2C3E50; /* Dark blue-gray */
-    }
+  /* Directions component styles */
+  .mapbox-directions-component {
+  padding: 15px; /* Moderate padding for the component */
+  margin: 10px; /* Margin around the component */
+  border-radius: 5px; /* Rounded corners */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  background-color: #fff; /* White background for readability */
+}
 
-    nav a {
-      color: #E0E0E0;
-    }
+/* Hide the A and B components */
+.mapbox-directions-origin,
+.mapbox-directions-destination {
+  display: none; /* Hides the origin and destination labels */
+}
 
-    .navbar input, .navbar button {
-      background-color: #333;
-      border: none;
-      color: #E0E0E0;
-    }
+/* Route summary styles */
+.mapbox-directions-route-summary {
+  font-size: 1.1em; /* Slightly larger font for emphasis */
+  line-height: 1.4; /* Increased line height for readability */
+  margin-bottom: 8px; /* Space below summary */
+}
 
-    /* Map container */
-    #map {
-      background-color: #181818;
-    }
+/* Duration display styles */
+.mapbox-directions-duration {
+  font-size: 1.2em; /* Increased font size for visibility */
+  color: #000; /* Set text color to black for visibility */
+  margin-top: 5px; /* Space above duration */
+  padding: 5px; /* Padding around duration */
+  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background for contrast */
+  border-radius: 5px; /* Rounded corners */
+}
 
-    /* Footer */
-    footer {
-      background-color: #2C3E50;
-      color: #E0E0E0;
-    }
+/* Target the span directly */
+.mapbox-directions-route-summary span {
+  font-size: 1.2em; /* Increase font size */
+  color: #000; /* Black color for better visibility */
+  background-color: rgba(255, 255, 255, 0.9); /* Slightly opaque background */
+  padding: 2px 5px; /* Padding for better readability */
+  border-radius: 3px; /* Rounded corners */
+}
 
-    /* Button colors */
-    .btn-primary {
-      background-color: #008080; /* Teal */
-      color: #fff;
-    }
+/* Step styles */
+.mapbox-directions-step {
+  padding: 8px 0; /* Vertical padding for steps */
+  border-bottom: 1px solid #eee; /* Light border between steps */
+  font-size: 1em; /* Normal font size for step text */
+}
 
-    .btn-secondary {
-      background-color: #4A6C82; /* Cool gray-blue */
-      color: #fff;
-    }
+/* Keyline styles */
+.mapbox-directions-component-keyline {
+  margin-top: 10px; /* Space above the keyline */
+  border-top: 1px solid #ccc; /* Light border for separation */
+  padding-top: 8px; /* Padding for keyline */
+}
 
-    .btn-teal {
-      background-color: #008080;
-      color: #fff;
-    }
+/* Button styles */
+.mapbox-directions-button {
+  margin-top: 5px; /* Space above each button */
+  padding: 10px 15px; /* Padding for buttons */
+  font-size: 0.9em; /* Normal size for buttons */
+  background-color: #ffffff; /* Bootstrap primary color */
+  color: #fff; /* White text for buttons */
+  border: none; /* No border */
+  border-radius: 5px; /* Rounded corners */
+}
 
-    .btn-green {
-      background-color: #28A745;
-      color: #fff;
-    }
+.mapbox-directions-button:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+}
 
-    .btn-yellow {
-      background-color: #FFC107;
-      color: #fff;
-    }
+</style>
 
-    .btn-red {
-      background-color: #DC3545;
-      color: #fff;
-    }
-
-    .modal-content {
-      background-color: #1E1E1E; /* Dark background for modals */
-      color: #E0E0E0;
-    }
-
-    .form-input, .form-textarea {
-      background-color: #333;
-      color: #E0E0E0;
-      border-color: #4A6C82;
-    }
-  </style>
+    
+    </style>
 </head>
+
+  
+  
 <body class="font-roboto">
 
-  <!-- Header Section with Dark Navbar -->
-  <header>
-    <nav class="p-4">
-      <div class="container mx-auto flex justify-between items-center">
-        <a class="text-xl font-bold" href="#">DELHI-ZENITHS</a>
-        <div class="flex items-center space-x-2">
-          <input type="text" id="locationSearch" class="form-input rounded-l p-2" placeholder="Search a location..." />
-          <button id="searchButton" class="btn btn-primary"><i class="fas fa-search"></i> Search</button>
+  <!-- Header Section with Light Navbar -->
+  <!-- Header Section with Light Navbar --><!-- Header Section with Light Navbar -->
+<!-- Header Section with Light Navbar -->
+<header>
+  <nav class="p-4 flex justify-between items-center">
+    <div class="relative mt-2 flex-grow">
+      <input id="searchBox" type="text" placeholder="Search for a place" class="form-input rounded-l p-2" />
+      
+      <button id="searchButton" class="btn btn-primary"><i class="fas fa-search"></i> Search</button>
+      <!-- Suggestions List -->
+      <ul id="suggestions" class="hidden absolute z-10 w-full bg-white border border-gray-300 max-h-60 overflow-auto rounded-lg" style="top: 100%;"></ul>
+    </div>
+    
+    <ul class="flex items-center space-x-4">
+      <li>
+        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#suggestModal">
+          <i class="fas fa-map-marker-alt"></i> Suggest Locations
+        </button>
+      </li>
+      <li>
+        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#loginModal">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </button>
+      </li>
+      <li>
+        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#signupModal">
+          <i class="fas fa-user-plus"></i> Sign Up
+        </button>
+      </li>
+      <li>
+        <button id="pointsButton" class="btn btn-teal" style="color: #f8f9fa;">Points: 0</button>
+      </li>
+      <!-- Get Directions Button -->
+      <li>
+        <div id="directions-container" class="mt-4 text-center">
+          <button id="get-directions" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            <i class="fas fa-directions"></i> Get Directions
+          </button>
         </div>
-        <ul class="flex items-center space-x-2">
-          <li>
-            <button class="btn btn-yellow" data-bs-toggle="modal" data-bs-target="#suggestModal"><i class="fas fa-map-marker-alt"></i> Suggest Locations</button>
-          </li>
-          <li>
-            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="fas fa-sign-in-alt"></i> Login</button>
-          </li>
-          <li>
-            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#signupModal"><i class="fas fa-user-plus"></i> Sign Up</button>
-          </li>
-          <li>
-            <button id="pointsButton" class="btn btn-teal">Points: 0</button>
-          </li>
-        </ul>
-      </div>
-    </nav>
-  </header>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+
+
+
 
   <!-- Map Container -->
-  <div id="map" class="animate__animated animate__fadeIn" style="height: 500px;"></div>
+  <div id="map" class="animate__animated animate__fadeIn"></div>
 
-  <!-- Directions Button -->
-  <div id="directionsContainer" class="mt-3 text-center hidden">
-    <button id="getDirections" class="btn btn-green"><i class="fas fa-directions"></i> Get Directions</button>
-  </div>
-
-  <!-- Footer Section with Zoom Controls -->
-  <footer class="text-center p-3">
+  <!-- Footer Section -->
+  <footer>
     <div class="container mx-auto">
-      <div class="flex justify-center space-x-2">
-        <button id="zoomIn" class="btn btn-green"><i class="fas fa-plus"></i> Zoom In</button>
-        <button id="zoomOut" class="btn btn-red"><i class="fas fa-minus"></i> Zoom Out</button>
-        <button id="locateMe" class="btn btn-teal"><i class="fas fa-location-arrow"></i> Locate Me</button>
-      </div>
+      <p>&copy; 2024 DELHI-ZENITHS. All rights reserved.</p>
     </div>
   </footer>
 
@@ -241,14 +362,54 @@
     </div>
   </div>
 
-  <!-- Bootstrap and Leaflet JS -->
+  <!-- Mapbox and Bootstrap JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
-  <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
-  <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+<script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.0/mapbox-gl-directions.js'></script>
+<script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.min.js'></script>
 
   <!-- Custom Script -->
   <script src="script.js"></script>
+  <script>
+    // Location Search Autocomplete
+    $('#searchBox').on('input', function () {
+      const query = $(this).val();
+      if (query.length > 2) {
+        $.get(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${mapboxgl.accessToken}`, function (data) {
+          $('#suggestions').empty();
+          if (data.features.length > 0) {
+            data.features.forEach(location => {
+              $('#suggestions').append(`<li class="suggestion-item" data-lat="${location.geometry.coordinates[1]}" data-lon="${location.geometry.coordinates[0]}">${location.place_name}</li>`);
+            });
+            $('#suggestions').removeClass('hidden');
+          } else {
+            $('#suggestions').addClass('hidden');
+          }
+        });
+      } else {
+        $('#suggestions').addClass('hidden');
+      }
+    });
+
+    // Handle suggestion click
+    $(document).on('click', '.suggestion-item', function () {
+      const lat = $(this).data('lat');
+      const lon = $(this).data('lon');
+      $('#searchBox').val($(this).text());
+      $('#suggestions').addClass('hidden');
+      map.flyTo({
+        center: [lon, lat],
+        zoom: 15,
+        essential: true // This animation is considered essential with respect to prefers-reduced-motion
+      });
+    });
+
+    // Hide suggestions when clicking outside
+    $(document).click(function (event) {
+      if (!$(event.target).closest('#searchBox, #suggestions').length) {
+        $('#suggestions').addClass('hidden');
+      }
+    });
+  </script>
 </body>
 </html>
